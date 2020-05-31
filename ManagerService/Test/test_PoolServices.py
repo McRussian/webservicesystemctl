@@ -31,5 +31,5 @@ class TestPoolService(TestCase):
             'virtualbox', 'vmware-USBArbitrator', 'vmware', 'whoopsie', 'wpa_supplicant'
         ]
 
-        pool = PoolService(username='user')
+        pool = PoolService()
         self.assertEqual(pool.GetListService(), sorted(services))

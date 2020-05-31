@@ -10,16 +10,13 @@ class PoolService:
     '''
     Объект этого класса представляет собой список всех существующих сервисов
     Он позволяет управлять сервисами с помощью своего интерфейса
-    Для управления сервисами необходимо имя пользователя системы,
-    от лица которого происходит управления
     '''
 
     _services = None
     _username = None
 
-    def __init__(self, username:str):
+    def __init__(self):
         self._services = dict()
-        self._username = username
         self._InitPoolService()
 
 
@@ -42,7 +39,7 @@ class PoolService:
                 continue
             name = '.'.join(item.split()[0].split('.')[:-1])
             try:
-                service = Service(name=name, username=self._username)
+                service = Service(name=name)
                 self._services[name] = service
             except ServiceException as err:
                 pass

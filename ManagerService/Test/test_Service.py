@@ -9,7 +9,7 @@ from ..ServiceException import ServiceException
 class TestService(TestCase):
 
     def test_CreateUncorrectService(self):
-        self.assertRaises(ServiceException, Service, 'test', 'test')
+        self.assertRaises(ServiceException, Service, 'test')
 
     def test_DescriptionService(self):
         nameservice = {
@@ -20,5 +20,22 @@ class TestService(TestCase):
         }
 
         for name in nameservice.keys():
-            service = Service(name=name, username='user')
+            service = Service(name=name)
             self.assertEqual(nameservice[name], service.GetDescription())
+
+    def test_ManagedService(self):
+        nameservice = {
+            'vmware': 'LSB: This service starts and stops VMware services',
+            'ufw': 'Uncomplicated firewall',
+            'cups': 'CUPS Scheduler'
+        }
+
+        for name in nameservice:
+            service = Service(name=name)
+            service.StopService()
+            self.assertEqual(service.GetStatus(), 'inactive')
+
+        for name in nameservice:
+            service = Service(name=name)
+            service.StartService()
+            self.assertEqual(service.GetStatus(), 'active')
