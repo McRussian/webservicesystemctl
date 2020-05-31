@@ -19,6 +19,9 @@ class Service:
 
     def __init__(self, name:str, username:str):
         self._name = name
+        if not self._CheckServiceName():
+            raise ServiceException(1, 'Error Create Service')
+
         self._username = username
 
         try:
@@ -33,12 +36,20 @@ class Service:
     def GetDescription(self)-> str:
         return self._description
 
+    def _CheckServiceName(self)-> bool:
+        command = ['systemctl', 'status', self._name]
+        result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        if result.stdout.split('\n')[0] == '':
+            return False
+        else:
+            return True
+
     def _ReadDescriptionService(self):
         command = ['systemctl', 'status', self._name]
         result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
 
-        if result.returncode == 0:
+        try:
             fullname = result.stdout.split('\n')[0]
             self._description = ' '.join(fullname.split()[3:])
-        else:
+        except:
             raise ServiceException(11, 'Service not Read Description')
