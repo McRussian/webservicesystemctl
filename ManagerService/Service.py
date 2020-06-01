@@ -15,9 +15,11 @@ class Service:
     _name = None
     _description = None
     _status = None
+    _is_active = None
 
     def __init__(self, name:str):
         self._name = name
+        self._is_active = True
         if not self._CheckServiceName():
             raise ServiceException(1, 'Error Create Service')
         try:
@@ -36,12 +38,23 @@ class Service:
         return self._status
 
     def StartService(self):
-        if not self._RunCommand('start') == 0:
-            raise ServiceException(13, 'Service ' + self._name + ' not Started!!!')
+        if self._is_active:
+            if not self._RunCommand('start') == 0:
+                raise ServiceException(13, 'Service ' + self._name + ' not Started!!!')
 
     def StopService(self):
-        if not self._RunCommand('stop') == 0:
-            raise ServiceException(15, 'Service ' + self._name + ' not Stoped!!!')
+        if self._is_active:
+            if not self._RunCommand('stop') == 0:
+                raise ServiceException(15, 'Service ' + self._name + ' not Stoped!!!')
+
+    def Enable(self):
+        self._is_active = True
+
+    def Disable(self):
+        self._is_active = False
+
+    def GetActiveStatus(self)-> bool:
+        return self._is_active
 
     def _CheckServiceName(self)-> bool:
         command = ['systemctl', 'status', self._name]

@@ -39,3 +39,28 @@ class TestService(TestCase):
             service = Service(name=name)
             service.StartService()
             self.assertEqual(service.GetStatus(), 'active')
+
+    def test_ActivateService(self):
+        nameservice = {
+            'vmware': 'LSB: This service starts and stops VMware services',
+            'ufw': 'Uncomplicated firewall',
+            'cups': 'CUPS Scheduler'
+        }
+
+        for name in nameservice:
+            service = Service(name=name)
+            service.StopService()
+            self.assertEqual(service.GetStatus(), 'inactive')
+
+            service.Disable()
+            service.StartService()
+            self.assertEqual(service.GetStatus(), 'inactive')
+
+        for name in nameservice:
+            service = Service(name=name)
+            service.StartService()
+            self.assertEqual(service.GetStatus(), 'active')
+
+            service.Disable()
+            service.StopService()
+            self.assertEqual(service.GetStatus(), 'active')
