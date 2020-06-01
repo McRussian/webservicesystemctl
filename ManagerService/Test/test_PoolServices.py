@@ -7,6 +7,11 @@ from ..ServiceException import ServiceException
 
 
 class TestPoolService(TestCase):
+    nameservice = {
+        'vmware': 'LSB: This service starts and stops VMware services',
+        'ufw': 'Uncomplicated firewall',
+        'cups': 'CUPS Scheduler'
+    }
 
     def test_CreatePoolServices(self):
         services = [
@@ -45,39 +50,23 @@ class TestPoolService(TestCase):
         self.assertRaises(ServiceException, pool.DeactivateService, 'test')
 
     def test_DescriptionService(self):
-        nameservice = {
-            'vmware': 'LSB: This service starts and stops VMware services',
-            'ufw': 'Uncomplicated firewall',
-            'sddm': 'Simple Desktop Display Manager',
-            'cups': 'CUPS Scheduler'
-        }
         pool = PoolService()
-        for name in nameservice.keys():
-            self.assertEqual(nameservice[name], pool.GetDescriptionService(name))
+        for name in self.nameservice.keys():
+            self.assertEqual(self.nameservice[name], pool.GetDescriptionService(name))
 
     def test_ManagedService(self):
-        nameservice = {
-            'vmware': 'LSB: This service starts and stops VMware services',
-            'ufw': 'Uncomplicated firewall',
-            'cups': 'CUPS Scheduler'
-        }
         pool = PoolService()
-        for name in nameservice:
+        for name in self.nameservice:
             pool.StopService(name)
             self.assertEqual(pool.GetStatusService(name), 'inactive')
 
-        for name in nameservice:
+        for name in self.nameservice:
             pool.StartService(name)
             self.assertEqual(pool.GetStatusService(name), 'active')
 
-    def test_ActivateSErvice(self):
-        nameservice = {
-            'vmware': 'LSB: This service starts and stops VMware services',
-            'ufw': 'Uncomplicated firewall',
-            'cups': 'CUPS Scheduler'
-        }
+    def test_ActivateService(self):
         pool = PoolService()
-        for name in nameservice:
+        for name in self.nameservice:
             pool.StopService(name)
             self.assertEqual(pool.GetStatusService(name), 'inactive')
             pool.DeactivateService(name)
@@ -85,9 +74,23 @@ class TestPoolService(TestCase):
             self.assertEqual(pool.GetStatusService(name), 'inactive')
             pool.ActivateService(name)
 
-        for name in nameservice:
+        for name in self.nameservice:
             pool.StartService(name)
             self.assertEqual(pool.GetStatusService(name), 'active')
             pool.DeactivateService(name)
             pool.StopService(name)
             self.assertEqual(pool.GetStatusService(name), 'active')
+
+    def test_SaveInActiveService(self):
+        pool = PoolService()
+        for name in self.nameservice:
+            pool.DeactivateService(name)
+
+        pool.SaveStatusService()
+        pool = PoolService()
+        for name in self.nameservice:
+            self.assertFalse(pool.GetActiveStatusService(name))
+            pool.ActivateService(name)
+
+        pool.SaveStatusService()
+
