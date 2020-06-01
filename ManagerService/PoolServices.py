@@ -33,6 +33,10 @@ class PoolService:
         self._CheckNameService(servicename=servicename)
         self._services[servicename].StopService()
 
+    def RestartService(self, servicename:str):
+        self.StopService(servicename=servicename)
+        self._services[servicename].StartService()
+
     def GetStatusService(self, servicename:str)-> str:
         self._CheckNameService(servicename=servicename)
         return self._services[servicename].GetStatus()
@@ -48,12 +52,14 @@ class PoolService:
     def ActivateService(self, servicename: str):
         self._CheckNameService(servicename=servicename)
         self._services[servicename].Enable()
+        self._SaveStatusService()
 
     def DeactivateService(self, servicename: str):
         self._CheckNameService(servicename=servicename)
         self._services[servicename].Disable()
+        self._SaveStatusService()
 
-    def SaveStatusService(self):
+    def _SaveStatusService(self):
         fin = open(self._filename, 'w')
         for name in self._services.keys():
             if not self._services[name].GetActiveStatus():
@@ -67,7 +73,7 @@ class PoolService:
         if result.returncode == 0:
              list_service = result.stdout.split('\n')
         else:
-            raise ServiceException(21, 'Not initialize List Service')
+            raise ServiceException(51, 'Not initialize List Service')
 
         ls_inactive_service = self._ReadInactiveService()
         for item in list_service:

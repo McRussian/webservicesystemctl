@@ -1,7 +1,8 @@
 import logging
 import logging.handlers
+from singleton_decorator import singleton
 
-
+@singleton
 class Logger:
     '''
     Объект этого класса - обертка над syslog
