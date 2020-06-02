@@ -8,7 +8,7 @@ from ..ServiceException import ServiceException
 
 class TestPoolService(TestCase):
     services = [
-        'postgresql', 'cups',
+        'postgresql', 'cups', 'sshd'
     ]
 
     def test_CreatePoolServices(self):
@@ -26,10 +26,15 @@ class TestPoolService(TestCase):
         self.assertRaises(ServiceException, pool.DeactivateService, 'test')
         self.assertRaises(ServiceException, pool.RestartService, 'test')
 
-    # def test_DescriptionService(self):
-    #     pool = PoolService()
-    #     for name in self.services:
-    #         self.assertEqual(name, pool.GetDescriptionService(name))
+    def test_DescriptionService(self):
+        services = {
+            'postgresql': 'PostgreSQL RDBMS',
+            'cups': 'CUPS Scheduler',
+            'sshd': 'OpenBSD Secure Shell server'
+        }
+        pool = PoolService()
+        for name in services.keys():
+            self.assertEqual(services[name], pool.GetDescriptionService(name))
 
     def test_ManagedService(self):
         pool = PoolService()

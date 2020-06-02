@@ -8,7 +8,7 @@ from ..ServiceException import ServiceException
 
 class TestService(TestCase):
     services = [
-        'postgresql', 'cups',
+        'postgresql', 'cups', 'sshd'
     ]
     def test_CreateUncorrectService(self):
         self.assertRaises(ServiceException, Service, 'test')

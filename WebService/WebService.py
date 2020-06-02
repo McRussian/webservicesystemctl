@@ -30,7 +30,7 @@ class WebService:
     def Start(self):
         web.run_app(self._app)
 
-    def ViewMainPage(self, request: web.Request) -> web.Response:
+    async def ViewMainPage(self, request: web.Request) -> web.Response:
 
         context = {
             'current_date': datetime.datetime.now().strftime("%Y.%m.%d"),
