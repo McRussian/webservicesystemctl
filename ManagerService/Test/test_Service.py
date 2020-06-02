@@ -7,7 +7,9 @@ from ..ServiceException import ServiceException
 
 
 class TestService(TestCase):
-
+    services = [
+        'postgresql', 'cups',
+    ]
     def test_CreateUncorrectService(self):
         self.assertRaises(ServiceException, Service, 'test')
 
@@ -24,30 +26,18 @@ class TestService(TestCase):
             self.assertEqual(nameservice[name], service.GetDescription())
 
     def test_ManagedService(self):
-        nameservice = {
-            'vmware': 'LSB: This service starts and stops VMware services',
-            'ufw': 'Uncomplicated firewall',
-            'cups': 'CUPS Scheduler'
-        }
-
-        for name in nameservice:
+        for name in self.services:
             service = Service(name=name)
             service.StopService()
             self.assertEqual(service.GetStatus(), 'inactive')
 
-        for name in nameservice:
+        for name in self.services:
             service = Service(name=name)
             service.StartService()
             self.assertEqual(service.GetStatus(), 'active')
 
     def test_ActivateService(self):
-        nameservice = {
-            'vmware': 'LSB: This service starts and stops VMware services',
-            'ufw': 'Uncomplicated firewall',
-            'cups': 'CUPS Scheduler'
-        }
-
-        for name in nameservice:
+        for name in self.services:
             service = Service(name=name)
             service.StopService()
             self.assertEqual(service.GetStatus(), 'inactive')
@@ -56,10 +46,11 @@ class TestService(TestCase):
             service.StartService()
             self.assertEqual(service.GetStatus(), 'inactive')
 
-        for name in nameservice:
+        for name in self.services:
             service = Service(name=name)
             service.StartService()
-            self.assertEqual(service.GetStatus(), 'active')
+            status = service.GetStatus()
+            self.assertEqual(status, 'active')
 
             service.Disable()
             service.StopService()

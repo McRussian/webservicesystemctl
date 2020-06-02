@@ -1,7 +1,6 @@
 __author__ = "McRussian Andrey"
 # -*- coding: utf8 -*-
 
-from subprocess import PIPE, run
 import os
 from .Service import Service
 from .ServiceException import ServiceException
@@ -9,17 +8,20 @@ from .ServiceException import ServiceException
 
 class PoolService:
     '''
-    Объект этого класса представляет собой список всех существующих сервисов
+    Объект этого класса представляет собой список сервисов
+    Список берется из текстового файла services.cnf
     Он позволяет управлять сервисами с помощью своего интерфейса
     '''
 
     _services = None
     _commands = None
-    _filename = None
+    _file_service = None
+    _file_inactive_service = None
 
     def __init__(self):
         self._services = dict()
-        self._filename = os.path.dirname(__file__) + os.sep + 'inactive.service.cnf'
+        self._file_service = os.path.dirname(__file__) + os.sep + 'service.cnf'
+        self._file_inactive_service = os.path.dirname(__file__) + os.sep + 'inactive.service.cnf'
         self._InitPoolService()
 
     def GetListService(self)-> list:
@@ -64,26 +66,16 @@ class PoolService:
         self._SaveStatusService()
 
     def _SaveStatusService(self):
-        fin = open(self._filename, 'w')
+        fin = open(self._file_inactive_service, 'w')
         for name in self._services.keys():
             if not self._services[name].GetActiveStatus():
                 fin.write(name + '\n')
         fin.close()
 
     def _InitPoolService(self):
-        command = ['systemctl', '-a', '--type=service', '--no-legend']
-        result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-
-        if result.returncode == 0:
-             list_service = result.stdout.split('\n')
-        else:
-            raise ServiceException(51, 'Not initialize List Service')
-
-        ls_inactive_service = self._ReadInactiveService()
-        for item in list_service:
-            if item == '':
-                continue
-            name = '.'.join(item.split()[0].split('.')[:-1])
+        ls_service = self._ReadInactiveService(self._file_service)
+        ls_inactive_service = self._ReadInactiveService(self._file_inactive_service)
+        for name in ls_service:
             try:
                 service = Service(name=name)
                 self._services[name] = service
@@ -96,9 +88,9 @@ class PoolService:
         if not servicename in self._services.keys():
             raise ServiceException(23, 'Unknown Name of Service')
 
-    def _ReadInactiveService(self)-> list:
+    def _ReadInactiveService(self, filename)-> list:
         try:
-            fout = open(self._filename, 'r')
+            fout = open(filename, 'r')
             ls = list(map(lambda s: s.strip('\n'), fout.readlines()))
             fout.close()
             return ls
