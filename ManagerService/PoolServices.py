@@ -37,6 +37,10 @@ class PoolService:
         self.StopService(servicename=servicename)
         self._services[servicename].StartService()
 
+    def GetInfoService(self, servicename:str)-> dict:
+        self.StopService(servicename=servicename)
+        return self._services[servicename].GetInfo()
+
     def GetStatusService(self, servicename:str)-> str:
         self._CheckNameService(servicename=servicename)
         return self._services[servicename].GetStatus()

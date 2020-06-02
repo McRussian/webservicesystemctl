@@ -33,12 +33,11 @@ class ManagerService:
             'deactivate': self._services.DeactivateService
         }
 
-    def GetListservice(self)-> list:
+    def GetListService(self)-> list:
         ls_service = []
         for name in self._services.GetListService():
             try:
-                ls_service.append((name, self._services.GetDescriptionService(name), self._services.GetStatusService(name),
-                              self._services.GetActiveStatusService(name)))
+                ls_service.append(self._services.GetInfoService(servicename=name))
             except ServiceException as err:
                 self._logger.Message(err.GetErrorMessage(), 'error')
         return ls_service
