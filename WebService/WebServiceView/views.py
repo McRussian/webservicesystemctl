@@ -9,8 +9,11 @@ import datetime
 async def MainPage(request: web.Request) -> web.Response:
 
     context = {
-        'username': 'McRussian Andrey',
-        'current_date': datetime.datetime.now().strftime("%Y.%m.%d")
+        'current_date': datetime.datetime.now().strftime("%Y.%m.%d"),
+        'ls_service': [
+            {'name': 'service1', 'status': 'status1'},
+            {'name': 'service2', 'status': 'status2'},
+        ]
     }
     response = aiohttp_jinja2.render_template("main.tmpl", request,
                                           context=context)

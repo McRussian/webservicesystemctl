@@ -30,6 +30,14 @@ class Service:
     def GetName(self)-> str:
         return self._name
 
+    def GetInfo(self)-> dict:
+        return {
+            'name': self._name,
+            'description': self._description,
+            'status': self.GetStatus(),
+            'active': self.GetActiveStatus()
+        }
+
     def GetDescription(self)-> str:
         return self._description
 
