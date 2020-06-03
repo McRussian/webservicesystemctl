@@ -46,9 +46,11 @@ class ManagerService:
         if (not type(servicename) == str) or (not type(command) == str):
             raise ServiceException(5, 'Bad Type for Servicename or Command')
         if not command in self._commands:
-            raise ServiceException(7, 'Unknown command')
+            raise ServiceException(7, 'Unknown command ' + command)
         try:
             self._commands[command](servicename=servicename)
+            self._logger.Message('Service ' + servicename + ' running command ' + command, 'info')
         except ServiceException as err:
             self._logger.Message(err.GetErrorMessage(), 'error')
+            raise ServiceException(3, 'Manager not Running Command ' + command + ' for Service ' + servicename)
 

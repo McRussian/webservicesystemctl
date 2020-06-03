@@ -9,6 +9,7 @@ import datetime
 
 from Logger import Logger
 from ManagerService.ManagerService import ManagerService
+from ManagerService.ServiceException import ServiceException
 
 
 class WebService:
@@ -25,7 +26,8 @@ class WebService:
             self._app,
             loader = jinja2.FileSystemLoader(path)
         )
-        self._app.add_routes([web.get('/', self.ViewMainPage)])
+        self._app.add_routes([web.get('/', self.ViewMainPage),
+                              web.get('/{servicename}/{command}', self.ManagedService)])
 
     def Start(self):
         web.run_app(self._app)
@@ -40,3 +42,19 @@ class WebService:
                                               context=context)
 
         return response
+
+    async def ManagedService(self, request):
+        servicename = request.match_info.get("servicename", None)
+        command = request.match_info.get("command", None)
+        try:
+            self._manager.RunCommand(servicename=servicename, command=command)
+            raise web.HTTPFound('/')
+        except ServiceException as err:
+            self._logger.Message(err.GetErrorMessage(), 'error')
+            raise web.HTTPNotFound(
+                    text="<html>\n  <body>\n        " + err.GetErrorMessage() +
+                         "\n  </body>\n</html>",
+                    content_type="text/html")
+
+
+

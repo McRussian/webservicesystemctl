@@ -40,7 +40,6 @@ class PoolService:
         self._services[servicename].StartService()
 
     def GetInfoService(self, servicename:str)-> dict:
-        self.StopService(servicename=servicename)
         return self._services[servicename].GetInfo()
 
     def GetStatusService(self, servicename:str)-> str:
