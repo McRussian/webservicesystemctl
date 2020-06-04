@@ -1,7 +1,24 @@
 <html>
     <head>
-        <title>aiohttp page</title>
+        <title>WebSystemctl Service</title>
+
+        <style>
+            .c {
+            border: 1px solid #333; /* Рамка */
+            display: inline-block;
+            padding: 5px 15px; /* Поля */
+            text-decoration: none; /* Убираем подчёркивание */
+            color: #000; /* Цвет текста */
+            }
+            .c:hover {
+            box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Тень */
+            background: linear-gradient(to bottom, #fcfff4, #e9e9ce); /* Градиент */
+            color: #a00;
+            }
+        </style>
+
     </head>
+
     <body>
         <div>
             <h1><a href="/">My WebSystemctl Server</a></h1>
@@ -16,17 +33,26 @@
                     <th>Servicename</th>
                     <th>Description</th>
                     <th>Status</th>
+                    <th>Commands</th>
                 </tr>
 
                {% for service in ls_service %}
                 <tr>
-                    <th>Active</th>
+                    <th>
+                    </th>
                     <th>{{ service.name }}</th>
                     <th>{{ service.description }}</th>
                     <th>{{ service.status }}</th>
+                    <th>
+                        {% if service.active %}
+                        <a href="{{ service.name }}/start" class="c">Start</a>
+                        <a href="{{ service.name }}/stop" class="c">Stop</a>
+                        <a href="{{ service.name }}/restart" class="c">Restart</a>
+                        {% endif %}
+                    </th>
                 </tr>
                 {% endfor %}
-            </ul>
+            </table>
         </div>
     </body>
 </html>
