@@ -56,5 +56,3 @@ class WebService:
                          "\n  </body>\n</html>",
                     content_type="text/html")
 
-
-

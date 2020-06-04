@@ -39,6 +39,11 @@
                {% for service in ls_service %}
                 <tr>
                     <th>
+                        {% if service.active %}
+                            <a href="{{ service.name }}/deactivate" class="c">Deactivate</a>
+                        {% else %}
+                            <a href="{{ service.name }}/activate" class="c">Activate</a>
+                        {% endif %}
                     </th>
                     <th>{{ service.name }}</th>
                     <th>{{ service.description }}</th>
